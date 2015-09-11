@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class EnrollmentService {
     @Autowired
     private CampaignEnrollmentDataService campaignEnrollmentDataService;
 
+    @Transactional
     public void register(CampaignEnrollment enrollment) {
         CampaignEnrollment existingEnrollment = campaignEnrollmentDataService.findByExternalIdAndCampaignName(enrollment.getExternalId(), enrollment.getCampaignName());
         if (existingEnrollment == null) {
@@ -40,6 +42,7 @@ public class EnrollmentService {
         }
     }
 
+    @Transactional
     public void unregister(String externalId, String campaignName) {
         CampaignEnrollment enrollment = campaignEnrollmentDataService.findByExternalIdAndCampaignName(externalId, campaignName);
         if (enrollment != null) {
@@ -48,16 +51,18 @@ public class EnrollmentService {
         }
     }
 
+    @Transactional
     public void unregister(CampaignEnrollment enrollment) {
         enrollment.setStatus(CampaignEnrollmentStatus.INACTIVE);
         campaignEnrollmentDataService.update(enrollment);
     }
 
+    @Transactional
     public void delete(CampaignEnrollment enrollment) {
         campaignEnrollmentDataService.delete(enrollment);
     }
 
-
+    @Transactional
     public List<CampaignEnrollment> search(CampaignEnrollmentsQuery query) {
         List<CampaignEnrollment> enrollments = new ArrayList<>();
         Criterion primaryCriterion = query.getPrimaryCriterion();

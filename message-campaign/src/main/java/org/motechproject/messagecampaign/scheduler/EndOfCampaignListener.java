@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class EndOfCampaignListener {
@@ -19,12 +20,8 @@ public class EndOfCampaignListener {
 
     private CampaignEnrollmentDataService campaignEnrollmentDataService;
 
-    @Autowired
-    public EndOfCampaignListener(CampaignEnrollmentDataService campaignEnrollmentDataService) {
-        this.campaignEnrollmentDataService = campaignEnrollmentDataService;
-    }
-
     @MotechListener(subjects = EventKeys.CAMPAIGN_COMPLETED)
+    @Transactional
     public void handle(MotechEvent event) throws SchedulerException {
         String campaignName = (String) event.getParameters().get(EventKeys.CAMPAIGN_NAME_KEY);
         String externalId = (String) event.getParameters().get(EventKeys.EXTERNAL_ID_KEY);
@@ -41,5 +38,10 @@ public class EndOfCampaignListener {
             LOGGER.warn("Cannot complete campaign: {}, because enrollment with id: {} doesn't exist",
                     campaignName, externalId);
         }
+    }
+
+    @Autowired
+    public void setCampaignEnrollmentDataService(CampaignEnrollmentDataService campaignEnrollmentDataService) {
+        this.campaignEnrollmentDataService = campaignEnrollmentDataService;
     }
 }

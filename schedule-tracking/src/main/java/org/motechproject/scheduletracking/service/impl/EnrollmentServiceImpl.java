@@ -19,14 +19,13 @@ import org.motechproject.scheduletracking.service.MilestoneAlerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
 import static org.motechproject.scheduletracking.domain.EnrollmentStatus.COMPLETED;
 import static org.motechproject.scheduletracking.domain.EnrollmentStatus.UNENROLLED;
 
-@Component
 public class EnrollmentServiceImpl implements EnrollmentService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnrollmentServiceImpl.class);
@@ -48,6 +47,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public Long enroll(String externalId, String scheduleName, String startingMilestoneName, DateTime referenceDateTime, DateTime enrollmentDateTime, Time preferredAlertTime, Map<String, String> metadata) {
         LOGGER.info("Finding by Schedule Name {}", scheduleName);
         Schedule schedule = scheduleDataService.findByName(scheduleName);
@@ -83,6 +83,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public void fulfillCurrentMilestone(Enrollment enrollment, DateTime fulfillmentDateTime) {
         LOGGER.info("Finding by Schedule Name {}", enrollment.getScheduleName());
         Schedule schedule = scheduleDataService.findByName(enrollment.getScheduleName());
@@ -108,6 +109,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public void unenroll(Enrollment enrollment) {
         unscheduleJobs(enrollment);
         enrollment.setStatus(UNENROLLED);
@@ -126,6 +128,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public MilestoneAlerts getAlertTimings(String externalId, String scheduleName, String milestoneName, DateTime referenceDateTime, DateTime enrollmentDateTime, Time preferredAlertTime) {
         Schedule schedule = scheduleDataService.findByName(scheduleName);
         return enrollmentAlertService.getAlertTimings(new EnrollmentBuilder().withExternalId(externalId).withSchedule(schedule).withCurrentMilestoneName(milestoneName).withStartOfSchedule(referenceDateTime).withEnrolledOn(enrollmentDateTime).withPreferredAlertTime(preferredAlertTime).withStatus(EnrollmentStatus.ACTIVE).withMetadata(null).toEnrollment());

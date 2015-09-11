@@ -1,7 +1,5 @@
 package org.motechproject.hub.service.impl;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.motechproject.hub.mds.HubDistributionContent;
 import org.motechproject.hub.mds.HubPublisherTransaction;
@@ -25,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service(value = "contentDistributionService")
 public class ContentDistributionServiceImpl implements
@@ -74,6 +75,7 @@ public class ContentDistributionServiceImpl implements
     }
 
     @Override
+    @Transactional
     public void distribute(String url) {
         List<HubTopic> hubTopics = hubTopicMDSService.findByTopicUrl(url);
         long topicId = -1;

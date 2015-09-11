@@ -1,8 +1,5 @@
 package org.motechproject.hub.service.impl;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
 import org.motechproject.hub.exception.ApplicationErrors;
@@ -25,6 +22,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This is the implementation class of the interface
@@ -80,6 +81,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public void subscribe(final String callbackUrl, final Modes mode,
             final String topic, String leaseSeconds, String secret)
             throws HubException {
